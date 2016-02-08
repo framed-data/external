@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+GROUP="io.framed"
+ARTIFACT="external"
+VERSION=`echo -n $(head -n1 ./VERSION) | tr -d "\n"`
+JAR="target/external-$VERSION-standalone.jar"
+TARGET="target/maven"
+
+lein pom
+
+rm -rf $TARGET
+
+mvn install:install-file \
+  -DgroupId=$GROUP \
+  -DartifactId=$ARTIFACT \
+  -Dfile=$JAR \
+  -DpomFile=pom.xml \
+  -DlocalRepositoryPath=$TARGET \
+  -DcreateChecksum=true
+
+cd $TARGET && aws s3 cp --recursive io s3://io.framed.maven/releases/io
