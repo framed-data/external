@@ -8,6 +8,12 @@ VERSION=`echo -n $(head -n1 ./VERSION) | tr -d "\n"`
 JAR="target/external-$VERSION-standalone.jar"
 TARGET="target/maven"
 
+if [[ ! -f "$JAR" ]] ; then
+    echo "ERROR: $JAR not found, exiting"
+    exit 1
+fi
+
+
 lein pom
 
 rm -rf $TARGET
